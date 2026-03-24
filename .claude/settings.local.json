@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python analyze_excel.py)",
+      "mcp__qunhe-devops-mcp__get_confluence_page_body",
+      "mcp__qunhe-devops-mcp__get_confluence_page_metadata",
+      "mcp__qunhe-devops-mcp__create_confluence_page_attachment",
+      "mcp__qunhe-devops-mcp__update_confluence_page",
+      "Bash(python compare_monthly.py)",
+      "Bash(python -c \":*)"
+    ]
+  }
+}
