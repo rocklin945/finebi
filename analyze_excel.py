@@ -50,6 +50,31 @@ df_type2 = df_type2[(df_type2['姓名'] != '姓名') & (df_type2['部门路径']
 for col in ['AI建议采纳率', 'AI建议采纳数', 'AI建议被采纳数', 'AI建议接受率', 'AI建议被接受数', 'AI建议被不接受数']:
     df_type2[col] = pd.to_numeric(df_type2[col], errors='coerce').fillna(0)
 
+# ========== 建立花名到二级部门的映射 ==========
+df_dept_map = pd.read_excel('产研人员分布情况（职能维度）.xlsx', sheet_name=0)
+df_dept_map.columns = ['所属敏捷组', '花名', '岗位职级', '岗位名称', '敏捷组角色', '一级部门', '二级部门', 'HC']
+df_dept_valid_map = df_dept_map[df_dept_map['花名'].notna() & (df_dept_map['花名'] != '合计')].copy()
+name_to_dept = dict(zip(df_dept_valid_map['花名'], df_dept_valid_map['二级部门']))
+
+# ========== 读取订阅人数数据 ==========
+df_sub = pd.read_csv('订阅人数.csv')
+df_sub['二级部门'] = df_sub['name'].map(name_to_dept)
+
+# 从周期字符串中提取月份（如 '2026-02-12至2026-03-12' -> 3）
+def get_cycle_end_month(cycle):
+    try:
+        end = str(cycle).split('至')[1]
+        return int(end.split('-')[1])
+    except:
+        return 0
+
+df_sub['结束月份'] = df_sub['subscription_period'].apply(get_cycle_end_month)
+
+# 保存人员映射表
+name_dept_df = df_dept_valid_map[['花名', '二级部门']].copy()
+name_dept_df.to_csv('output/人员映射表.csv', index=False, encoding='utf-8-sig')
+print(f"已保存人员映射表: output/人员映射表.csv, 共{len(name_dept_df)}条记录")
+
 # ---------- 2.1 token花费人数占部门人数的比例 ----------
 print("\n--- 2.1 token花费人数占比 ---")
 token_users = df_type1[df_type1['token消耗'] > 0].groupby('部门')['姓名'].nunique().reset_index(name='token花费人数')
@@ -110,8 +135,10 @@ print(f"已保存: 2.1a_token人数对比.png, 2.1b_token占比.png")
 
 # ---------- 2.2 AI-IDE使用人数占部门人数的比例 ----------
 print("\n--- 2.2 AI-IDE使用人数占比 ---")
-# 类型Ⅱ中所有订阅报销人员就是AI-IDE使用人员
-ai_users = df_type2.groupby('部门')['姓名'].nunique().reset_index(name='AI-IDE使用人数')
+# 从订阅人数.csv获取3月份订阅用户（去重）
+mar_sub_users = df_sub[df_sub['结束月份'] == 3].drop_duplicates('name', keep='first')
+ai_users = mar_sub_users.groupby('二级部门')['name'].nunique().reset_index(name='AI-IDE使用人数')
+ai_users = ai_users.rename(columns={'二级部门': '部门'})
 ratio2 = pd.merge(dept_person_count, ai_users, on='部门', how='left')
 ratio2['AI-IDE使用人数'] = ratio2['AI-IDE使用人数'].fillna(0).astype(int)
 ratio2['占比'] = (ratio2['AI-IDE使用人数'] / ratio2['部门人数'] * 100).round(1)
