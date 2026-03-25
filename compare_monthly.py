@@ -76,7 +76,7 @@ token_compare = pd.merge(feb_token, mar_token, on='部门', how='outer').fillna(
 token_compare = pd.merge(dept_person_count, token_compare, on='部门', how='left').fillna(0)
 token_compare['2月Token消耗'] = token_compare['2月Token消耗'].astype(int)
 token_compare['3月Token消耗'] = token_compare['3月Token消耗'].astype(int)
-token_compare['环比增长率(%)'] = ((token_compare['3月Token消耗'] / token_compare['2月Token消耗'].replace(0, 1)) * 100).round(1)
+token_compare['环比增长率(%)'] = (((token_compare['3月Token消耗'] - token_compare['2月Token消耗']) / token_compare['2月Token消耗'].replace(0, 1)) * 100).round(1)
 
 feb_total = int(df_type1_feb['token消耗'].sum())
 mar_total = int(df_type1_mar['token消耗'].sum())
@@ -85,7 +85,7 @@ total_row = pd.DataFrame([{
     '部门人数': total_person_count,
     '2月Token消耗': feb_total,
     '3月Token消耗': mar_total,
-    '环比增长率(%)': round((mar_total / feb_total * 100), 1) if feb_total > 0 else 0
+    '环比增长率(%)': round(((mar_total - feb_total) / feb_total * 100), 1) if feb_total > 0 else 0
 }])
 token_compare = pd.concat([total_row, token_compare], ignore_index=True)
 
@@ -130,7 +130,7 @@ cost_compare = pd.merge(feb_cost, mar_cost, on='部门', how='outer').fillna(0)
 cost_compare = pd.merge(dept_person_count, cost_compare, on='部门', how='left').fillna(0)
 cost_compare['2月Token花费($)'] = cost_compare['2月Token花费($)'].round(2)
 cost_compare['3月Token花费($)'] = cost_compare['3月Token花费($)'].round(2)
-cost_compare['环比增长率(%)'] = ((cost_compare['3月Token花费($)'] / cost_compare['2月Token花费($)'].replace(0, 1)) * 100).round(1)
+cost_compare['环比增长率(%)'] = (((cost_compare['3月Token花费($)'] - cost_compare['2月Token花费($)']) / cost_compare['2月Token花费($)'].replace(0, 1)) * 100).round(1)
 
 feb_cost_total = round(df_type1_feb['花费'].sum(), 2)
 mar_cost_total = round(df_type1_mar['花费'].sum(), 2)
@@ -139,7 +139,7 @@ total_row = pd.DataFrame([{
     '部门人数': total_person_count,
     '2月Token花费($)': feb_cost_total,
     '3月Token花费($)': mar_cost_total,
-    '环比增长率(%)': round((mar_cost_total / feb_cost_total * 100), 1) if feb_cost_total > 0 else 0
+    '环比增长率(%)': round(((mar_cost_total - feb_cost_total) / feb_cost_total * 100), 1) if feb_cost_total > 0 else 0
 }])
 cost_compare = pd.concat([total_row, cost_compare], ignore_index=True)
 
@@ -183,7 +183,7 @@ users_compare = pd.merge(feb_users, mar_users, on='部门', how='outer').fillna(
 users_compare = pd.merge(dept_person_count, users_compare, on='部门', how='left').fillna(0)
 users_compare['2月Token使用人数'] = users_compare['2月Token使用人数'].astype(int)
 users_compare['3月Token使用人数'] = users_compare['3月Token使用人数'].astype(int)
-users_compare['环比增长率(%)'] = ((users_compare['3月Token使用人数'] / users_compare['2月Token使用人数'].replace(0, 1)) * 100).round(1)
+users_compare['环比增长率(%)'] = (((users_compare['3月Token使用人数'] - users_compare['2月Token使用人数']) / users_compare['2月Token使用人数'].replace(0, 1)) * 100).round(1)
 
 feb_users_total = int(df_type1_feb[df_type1_feb['token消耗'] > 0]['花名'].nunique())
 mar_users_total = int(df_type1_mar[df_type1_mar['token消耗'] > 0]['花名'].nunique())
@@ -192,7 +192,7 @@ total_row = pd.DataFrame([{
     '部门人数': total_person_count,
     '2月Token使用人数': feb_users_total,
     '3月Token使用人数': mar_users_total,
-    '环比增长率(%)': round((mar_users_total / feb_users_total * 100), 1) if feb_users_total > 0 else 0
+    '环比增长率(%)': round(((mar_users_total - feb_users_total) / feb_users_total * 100), 1) if feb_users_total > 0 else 0
 }])
 users_compare = pd.concat([total_row, users_compare], ignore_index=True)
 
@@ -236,7 +236,7 @@ ai_users_compare = pd.merge(feb_ai_users, mar_ai_users, on='部门', how='outer'
 ai_users_compare = pd.merge(dept_person_count, ai_users_compare, on='部门', how='left').fillna(0)
 ai_users_compare['2月AI-IDE订阅人数'] = ai_users_compare['2月AI-IDE订阅人数'].astype(int)
 ai_users_compare['3月AI-IDE订阅人数'] = ai_users_compare['3月AI-IDE订阅人数'].astype(int)
-ai_users_compare['环比增长率(%)'] = ((ai_users_compare['3月AI-IDE订阅人数'] / ai_users_compare['2月AI-IDE订阅人数'].replace(0, 1)) * 100).round(1)
+ai_users_compare['环比增长率(%)'] = (((ai_users_compare['3月AI-IDE订阅人数'] - ai_users_compare['2月AI-IDE订阅人数']) / ai_users_compare['2月AI-IDE订阅人数'].replace(0, 1)) * 100).round(1)
 
 feb_ai_total = int(df_type2_feb['花名'].nunique())
 mar_ai_total = int(df_type2_mar['花名'].nunique())
@@ -245,7 +245,7 @@ total_row = pd.DataFrame([{
     '部门人数': total_person_count,
     '2月AI-IDE订阅人数': feb_ai_total,
     '3月AI-IDE订阅人数': mar_ai_total,
-    '环比增长率(%)': round((mar_ai_total / feb_ai_total * 100), 1) if feb_ai_total > 0 else 0
+    '环比增长率(%)': round(((mar_ai_total - feb_ai_total) / feb_ai_total * 100), 1) if feb_ai_total > 0 else 0
 }])
 ai_users_compare = pd.concat([total_row, ai_users_compare], ignore_index=True)
 
@@ -311,7 +311,7 @@ satisfaction_compare['2月满意度'] = satisfaction_compare['2月满意度'].ro
 satisfaction_compare['3月满意度'] = satisfaction_compare['3月满意度'].round(1)
 # 只有2月和3月都有数据的部门才计算变化率
 satisfaction_compare['满意度变化率(%)'] = satisfaction_compare.apply(
-    lambda row: round(((row['3月满意度'] / row['2月满意度']) * 100 - 100), 1) if row['2月满意度'] > 0 and row['3月满意度'] > 0 else 0, axis=1
+    lambda row: round(((row['3月满意度'] - row['2月满意度']) / row['2月满意度'] * 100), 1) if row['2月满意度'] > 0 and row['3月满意度'] > 0 else 0, axis=1
 )
 
 # 添加总计行
@@ -320,7 +320,7 @@ mar_total_sat = df_satisfaction_mar['satisfaction_score'].mean() if len(df_satis
 
 # 计算变化率
 if pd.notna(feb_total_sat) and pd.notna(mar_total_sat) and feb_total_sat > 0 and mar_total_sat > 0:
-    change_rate = round(((mar_total_sat / feb_total_sat) * 100 - 100), 1)
+    change_rate = round(((mar_total_sat - feb_total_sat) / feb_total_sat * 100), 1)
 else:
     change_rate = 0.0
 
