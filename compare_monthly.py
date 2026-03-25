@@ -117,8 +117,8 @@ ax1.spines['right'].set_visible(False)
 ax1.set_facecolor('#FAFAFA')
 fig.patch.set_facecolor('white')
 for i, (idx, row) in enumerate(token_compare.iterrows()):
-    ax1.text(i - width/2, row['2月Token消耗'] + 5000000, f'{int(row["2月Token消耗"]/1000000):,}M', ha='center', va='bottom', fontsize=7, color='#6CB0F5')
-    ax1.text(i + width/2, row['3月Token消耗'] + 5000000, f'{int(row["3月Token消耗"]/1000000):,}M', ha='center', va='bottom', fontsize=7, color='#E8893C')
+    ax1.text(i - width/2, row['2月Token消耗'] + 5000000, f'{int(row["2月Token消耗"]/1000000)}M', ha='center', va='bottom', fontsize=7, color='#6CB0F5')
+    ax1.text(i + width/2, row['3月Token消耗'] + 5000000, f'{int(row["3月Token消耗"]/1000000)}M', ha='center', va='bottom', fontsize=7, color='#E8893C')
 
 ax2 = ax1.twinx()
 pcts = token_compare['环比增长率(%)'].values
